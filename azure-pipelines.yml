@@ -78,19 +78,20 @@ steps:
       Dockerfile: '**/Dockerfile'
       tags: local/dfe-teachers-payment-service:web-dependencies
   #       --target=dependencies \
-
-  # - script: |
-  #     docker build \
-  #       --file=Dockerfile \
-  #       --tag=local/dfe-teachers-payment-service:web-dependencies \
-  #       --target=dependencies \
-  #       .
-  #   displayName: Build web dependencies Docker image without cache
   #   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
   # # Build web
-  # - script: |
-  #     docker pull $(dockerRegistry)/$(dockerImageName):latest || true
+  - script: |
+      docker pull $(dockerRegistry)/$(dockerImageName):latest || true
+  - task: Docker@2
+    displayName: Build web Docker image using 'latest' as cache      
+    inputs:
+      containerRegistry: 's118d01contreg'
+      command: 'build'
+      Dockerfile: '**/Dockerfile'
+      tags: local/dfe-teachers-payment-service:web
+      arguments: GIT_COMMIT_HASH=$(Build.SourceVersion)
+  
   #     docker build \
   #       --file=Dockerfile \
   #       --cache-from=local/dfe-teachers-payment-service:web-dependencies \
@@ -99,7 +100,7 @@ steps:
   #       --target=web \
   #       --build-arg GIT_COMMIT_HASH=$(Build.SourceVersion) \
   #       .
-  #   displayName: Build web Docker image using 'latest' as cache
+  #   
   #   condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
 
   # - script: |
