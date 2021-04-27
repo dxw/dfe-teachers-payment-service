@@ -86,15 +86,18 @@ steps:
   # # Build web
   - script: |
       docker pull $(acrRegistry)/$(dockerImageName):latest || true
+    displayName: Pull latest from ACR
+ 
   - task: Docker@2
     displayName: Build web Docker image using 'latest' as cache      
     inputs:
       containerRegistry: 's118d01contreg'
+      repository: 'teacher-payments-service'
       command: 'build'
       Dockerfile: '**/Dockerfile'
-      tags: local/dfe-teachers-payment-service:web
-      arguments: GIT_COMMIT_HASH=$(Build.SourceVersion)
-  
+      tags: 'local/dfe-teachers-payment-service:web'
+      arguments: '--cache-from=local/dfe-teachers-payment-service:web-dependencies --cache-from=$(acrRegistry)/$(dockerImageName):latest'
+
   #     docker build \
   #       --file=Dockerfile \
   #       --cache-from=local/dfe-teachers-payment-service:web-dependencies \
