@@ -10,8 +10,8 @@ pool:
 
 variables:
   - group: docker-settings
-steps:
 
+steps:
   # Login to DockerHub
   - script: docker login -u $(dockerId) -p $pass
     env:
@@ -30,58 +30,58 @@ steps:
       docker pull $(acrRegistry)/$(dockerImageName):cache-test || true
     displayName: Pull test and test dependencies images 
 
-  - task: DockerCompose@0
-    displayName: Build test Docker image  
-    inputs:
-      containerregistrytype: 'Azure Container Registry'
-      azureSubscription: 'azdo.pipelines.cip.S118D.armfe1ef140-8bef-4043-b5ee-c449e6f951ef'
-      azureContainerRegistry: '{"loginServer":"s118d01contreg.azurecr.io", "id" : "/subscriptions/8655985a-2f87-44d7-a541-0be9a8c2779d/resourceGroups/s118d01-contreg/providers/Microsoft.ContainerRegistry/registries/s118d01contreg"}'
-      dockerComposeFile: 'docker-compose.test.yml'
-      action: 'Run a Docker Compose command'
-      dockerComposeCommand: 'build'
+  # - task: DockerCompose@0
+  #   displayName: Build test Docker image  
+  #   inputs:
+  #     containerregistrytype: 'Azure Container Registry'
+  #     azureSubscription: 'azdo.pipelines.cip.S118D.armfe1ef140-8bef-4043-b5ee-c449e6f951ef'
+  #     azureContainerRegistry: '{"loginServer":"s118d01contreg.azurecr.io", "id" : "/subscriptions/8655985a-2f87-44d7-a541-0be9a8c2779d/resourceGroups/s118d01-contreg/providers/Microsoft.ContainerRegistry/registries/s118d01contreg"}'
+  #     dockerComposeFile: 'docker-compose.test.yml'
+  #     action: 'Run a Docker Compose command'
+  #     dockerComposeCommand: 'build'
 
-  - task: DockerCompose@0
-    displayName: Run test on Docker
-    inputs:
-      containerregistrytype: 'Azure Container Registry'
-      azureSubscription: 'azdo.pipelines.cip.S118D.armfe1ef140-8bef-4043-b5ee-c449e6f951ef'
-      azureContainerRegistry: '{"loginServer":"s118d01contreg.azurecr.io", "id" : "/subscriptions/8655985a-2f87-44d7-a541-0be9a8c2779d/resourceGroups/s118d01-contreg/providers/Microsoft.ContainerRegistry/registries/s118d01contreg"}'
-      dockerComposeFile: 'docker-compose.test.yml'
-      action: 'Run a Docker Compose command'
-      dockerComposeCommand: 'run --rm test'
+  # - task: DockerCompose@0
+  #   displayName: Run test on Docker
+  #   inputs:
+  #     containerregistrytype: 'Azure Container Registry'
+  #     azureSubscription: 'azdo.pipelines.cip.S118D.armfe1ef140-8bef-4043-b5ee-c449e6f951ef'
+  #     azureContainerRegistry: '{"loginServer":"s118d01contreg.azurecr.io", "id" : "/subscriptions/8655985a-2f87-44d7-a541-0be9a8c2779d/resourceGroups/s118d01-contreg/providers/Microsoft.ContainerRegistry/registries/s118d01contreg"}'
+  #     dockerComposeFile: 'docker-compose.test.yml'
+  #     action: 'Run a Docker Compose command'
+  #     dockerComposeCommand: 'run --rm test'
 
-  # # Clean up
-  # - script: |
-  #     git reset --hard
-  #     git clean -xdf
-  #   displayName: Clean repository
+  # # # Clean up
+  # # - script: |
+  # #     git reset --hard
+  # #     git clean -xdf
+  # #   displayName: Clean repository
 
-  # Publish
-  - publish: $(System.DefaultWorkingDirectory)
-    artifact: repository
-    displayName: Publish repository as artifact
+  # # Publish
+  # - publish: $(System.DefaultWorkingDirectory)
+  #   artifact: repository
+  #   displayName: Publish repository as artifact
 
-  # # Build web dependencies
-  # - script: |
-  #     docker pull $(acrRegistry)/$(dockerImageName):cache-web-dependencies || true
-  #     docker build \
-  #       --file=Dockerfile \
-  #       --cache-from=$(acrRegistry)/$(dockerImageName):cache-web-dependencies \
-  #       --tag=local/dfe-teachers-payment-service:web-dependencies \
-  #       --target=dependencies \
-  #       .
-  #   displayName: Build web dependencies Docker image using 'cache-web-dependencies' as cache
-  #   condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+  # # # Build web dependencies
+  # # - script: |
+  # #     docker pull $(acrRegistry)/$(dockerImageName):cache-web-dependencies || true
+  # #     docker build \
+  # #       --file=Dockerfile \
+  # #       --cache-from=$(acrRegistry)/$(dockerImageName):cache-web-dependencies \
+  # #       --tag=local/dfe-teachers-payment-service:web-dependencies \
+  # #       --target=dependencies \
+  # #       .
+  # #   displayName: Build web dependencies Docker image using 'cache-web-dependencies' as cache
+  # #   condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
   
-  - task: Docker@2
-    displayName: Build web dependencies Docker image without cache      
-    inputs:
-      containerRegistry: 's118d01contreg'
-      command: 'build'
-      Dockerfile: '**/Dockerfile'
-      tags: local/dfe-teachers-payment-service:web-dependencies
-  #       --target=dependencies \
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  # - task: Docker@2
+  #   displayName: Build web dependencies Docker image without cache      
+  #   inputs:
+  #     containerRegistry: 's118d01contreg'
+  #     command: 'build'
+  #     Dockerfile: '**/Dockerfile'
+  #     tags: local/dfe-teachers-payment-service:web-dependencies
+  # #       --target=dependencies \
+  #   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
   # # Build web
   - script: |
@@ -96,7 +96,7 @@ steps:
       command: 'build'
       Dockerfile: '**/Dockerfile'
       tags: 'local/dfe-teachers-payment-service:web'
-      arguments: '--cache-from=local/dfe-teachers-payment-service:web-dependencies --cache-from=$(acrRegistry)/$(dockerImageName):latest'
+      arguments: '--cache-from=local/dfe-teachers-payment-service:web-dependencies --cache-from=$(acrRegistry)/$(dockerImageName):latest --target=web --build-arg GIT_COMMIT_HASH=$(Build.SourceVersion)'
 
   #     docker build \
   #       --file=Dockerfile \
