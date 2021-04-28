@@ -95,7 +95,7 @@ steps:
       repository: 'teacher-payments-service'
       command: 'build'
       Dockerfile: '**/Dockerfile'
-      tags: 'local/dfe-teachers-payment-service:web'
+      tags: 'web'
       arguments: '--cache-from=local/dfe-teachers-payment-service:web-dependencies --cache-from=$(acrRegistry)/$(dockerImageName):latest --target=web --build-arg GIT_COMMIT_HASH=$(Build.SourceVersion)'
 
   #     docker build \
