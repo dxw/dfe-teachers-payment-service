@@ -1,9 +1,9 @@
 pr: none
 
-# trigger:
-#    branches:
-#      include:
-#      - '*'
+trigger:
+   branches:
+     include:
+     - '*'
 
 pool:
   vmImage: ubuntu-latest
@@ -70,7 +70,7 @@ steps:
       Dockerfile: '**/Dockerfile'
       tags: local/dfe-teachers-payment-service:web-dependencies
       arguments: '--cache-from=$(acrRegistry)/$(dockerImageName):cache-web-dependencies --target=dependencies'
-    #condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')      
+    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')      
 
   - task: Docker@2
     displayName: Build web dependencies Docker image without cache      
@@ -80,7 +80,7 @@ steps:
       Dockerfile: '**/Dockerfile'
       tags: local/dfe-teachers-payment-service:web-dependencies
       arguments: '--target=dependencies'
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
   # # Build web
   - script: |
@@ -96,7 +96,7 @@ steps:
       Dockerfile: '**/Dockerfile'
       tags: 'web'
       arguments: '--cache-from=local/dfe-teachers-payment-service:web-dependencies --cache-from=$(acrRegistry)/$(dockerImageName):latest --target=web --build-arg GIT_COMMIT_HASH=$(Build.SourceVersion)'
-    #condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
 
   - task: Docker@2
     displayName: Build web Docker image without cache      
@@ -107,7 +107,7 @@ steps:
       Dockerfile: '**/Dockerfile'
       tags: 'web'
       arguments: '--cache-from=local/dfe-teachers-payment-service:web-dependencies --target=web --build-arg GIT_COMMIT_HASH=$(Build.SourceVersion)'
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
 
 
@@ -115,7 +115,7 @@ steps:
   - script: |
       docker tag local/dfe-teachers-payment-service:test-dependencies $(acrRegistry)/$(dockerImageName):cache-test-dependencies
     displayName: Tag local test dependencies Docker image for caching
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
   - task: Docker@2
     displayName: Push test Docker image for caching
@@ -124,13 +124,13 @@ steps:
       repository: 'teacher-payments-service'
       command: 'push'
       tags: 'cache-test-dependencies'  
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
 
   - script: |
       docker tag local/dfe-teachers-payment-service:test $(acrRegistry)/$(dockerImageName):cache-test
     displayName: Tag local Docker image for caching
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
   - task: Docker@2
     displayName: Push test Docker image for caching
@@ -139,12 +139,12 @@ steps:
       repository: 'teacher-payments-service'
       command: 'push'
       tags: 'cache-test'  
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
   # # Push web images
   - script: |
       docker tag local/dfe-teachers-payment-service:web-dependencies $(acrRegistry)/$(dockerImageName):cache-web-dependencies
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     displayName: Tag local web dependencies Docker image for caching
 
   - task: Docker@2
@@ -154,11 +154,11 @@ steps:
       repository: 'teacher-payments-service'
       command: 'push'
       tags: 'cache-web-dependencies'  
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
   - script: 
       docker tag local/dfe-teachers-payment-service:web $(acrRegistry)/$(dockerImageName):$(Build.BuildNumber)
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     displayName: Tag local build number Docker image for caching
 
   - task: Docker@2
@@ -168,11 +168,11 @@ steps:
       repository: 'teacher-payments-service'
       command: 'push'
       tags: $(Build.BuildNumber)  
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
 
   - script:
       docker tag local/dfe-teachers-payment-service:web $(acrRegistry)/$(dockerImageName):latest
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     displayName: Tag local latest Docker image for caching
 
   - task: Docker@2
@@ -182,4 +182,4 @@ steps:
       repository: 'teacher-payments-service'
       command: 'push'
       tags: latest  
-    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
