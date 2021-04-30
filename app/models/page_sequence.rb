@@ -15,6 +15,7 @@ class PageSequence
   end
 
   def next_slug
+    return "itt-subject-ineligible" if claim.eligibility.ineligible?
     return "ineligible" if claim.eligibility.ineligible?
     return "check-your-answers" if claim.submittable?
 

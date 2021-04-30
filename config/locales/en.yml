@@ -209,6 +209,7 @@ en:
     support_email_address: "earlycareerteacherpayments@digital.education.gov.uk"
     landing_page: "Apply for an early-career payment"
     ineligible: "You are not eligible"
+    ineligible_itt_subject: "Early-career payments are only available for teachers who did their ITT"
     questions:
       employed_as_supply_teacher: "Are you currently employed as a supply teacher?"
       has_entire_term_contract: "Do you have a contract to teach at the same school for an entire term or longer?"
