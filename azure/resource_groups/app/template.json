@@ -476,36 +476,6 @@
           }
         }
       }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-05-10",
-      "name": "[variables('databaseServerFirewallRulesDeploymentName')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', variables('appDeploymentName'))]",
-        "[resourceId('Microsoft.Resources/deployments', variables('databaseDeploymentName'))]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('platformBuildingBlocksDeploymentUrlBase'),'postgresql-server-firewall-rules.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "firewallRuleNamePrefix": {
-            "value": "[concat(parameters('resourceNamePrefix'), '-')]"
-          },
-          "ipAddresses": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('appDeploymentName'))).outputs.appServicePossibleOutboundIpAddresses.value]"
-          },
-          "serverName": {
-            "value": "[variables('databaseServerName')]"
-          },
-          "subnetResourceIdList": {
-            "value": ["[parameters('workerSubnetId')]"]
-          }
-        }
-      }
     }
   ],
   "outputs": {
