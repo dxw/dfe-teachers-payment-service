@@ -105,8 +105,7 @@
 
     "hasCustomHostNames": "[and(greater(length(parameters('appServiceHostNames')), 0), not(contains(parameters('appServiceHostNames'), 'PLACEHOLDER')))]"
   },
-  "resources": [
-    {
+  "resources": [{
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "name": "[variables('appServicePlanDeploymentName')]",
