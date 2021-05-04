@@ -188,7 +188,7 @@
     "databaseServerFirewallRulesDeploymentName": "[concat(parameters('resourceNamePrefix'), '-database-server-firewall-rules')]",
     "databaseDeploymentName": "[concat(parameters('resourceNamePrefix'), '-database')]",
 
-    "databaseServerName": "[concat(parameters('resourceNamePrefix'), '-db')]",
+    "databaseServerName": "[concat(parameters('resourceNamePrefix'), '-db1')]",
 
     "applicationInsightsName": "[concat(parameters('resourceNamePrefix'), '-ai')]",
 
