@@ -136,6 +136,39 @@
       }
     },
     {
+      "condition": "[variables('hasCustomHostNames')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "name": "[concat(variables('appServiceCertificateDeploymentNamePrefix'), copyIndex())]",
+      "dependsOn": [ "[resourceId('Microsoft.Resources/deployments', variables('appServicePlanDeploymentName'))]" ],
+      "copy": {
+        "name": "[variables('appServiceCertificateDeploymentCopyLoopName')]",
+        "count": "[length(parameters('appServiceCertificateSecretNames'))]",
+        "mode": "Serial"
+      },
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('platformBuildingBlocksDeploymentUrlBase'), 'app-service-certificate.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultCertificateName": {
+            "value": "[parameters('appServiceCertificateSecretNames')[copyIndex()]]"
+          },
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "keyVaultResourceGroup": {
+            "value": "[parameters('keyVaultResourceGroupName')]"
+          },
+          "serverFarmId": {
+            "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+          }
+        }
+      }
+    },
+    {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2018-11-01",
       "name": "[parameters('appServiceName')]",
@@ -189,6 +222,34 @@
       "properties": {
         "sslState": "SniEnabled",
         "thumbprint": "[if(variables('hasCustomHostNames'), reference(resourceId('Microsoft.Resources/deployments', concat(variables('appServiceCertificateDeploymentNamePrefix'), parameters('appServiceHostNameToCertificateSecretNameIndexMap')[parameters('appServiceHostNames')[copyIndex()]]))).outputs.certificateThumbprint.value, 'PLACEHOLDER')]"
+      }
+    },
+    {
+      "condition": "[parameters('enableLogs')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "name": "[variables('appServiceLogsDeploymentName')]",
+      "dependsOn": [ "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('platformBuildingBlocksDeploymentUrlBase'), 'app-service-logs.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServiceName": {
+            "value": "[parameters('appServiceName')]"
+          },
+          "httpLoggingEnabled": {
+            "value": true
+          },
+          "requestTracingEnabled": {
+            "value": true
+          },
+          "detailedErrorLoggingEnabled": {
+            "value": true
+          }
+        }
       }
     },
     {
