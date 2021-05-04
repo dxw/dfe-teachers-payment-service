@@ -209,35 +209,6 @@
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-05-10",
-      "name": "[variables('databaseDeploymentName')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'database.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "databaseServerName": {
-            "value": "[variables('databaseServerName')]"
-          },
-          "databaseName": {
-            "value": "[parameters('databaseName')]"
-          },
-          "databaseUsername": {
-            "value": "[parameters('databaseUsername')]"
-          },
-          "databasePassword": {
-            "value": "[parameters('databasePassword')]"
-          },
-          "alertEmailAddress": {
-            "value": "[parameters('alertEmailAddress')]"
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "name": "[variables('applicationInsightsDeploymentName')]",
       "properties": {
