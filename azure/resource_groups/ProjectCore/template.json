@@ -32,7 +32,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "name": "[variables('workerNetworkProfileDeploymentName')]",
-      "dependsOn": [ "[resourceId('Microsoft.Resources/deployments', variables('vnetDeploymentName'))]" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
