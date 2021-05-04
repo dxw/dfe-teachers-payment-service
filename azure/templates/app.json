@@ -31,14 +31,14 @@
     },
     "appServiceHostNames": {
       "type": "array",
-      "defaultValue": ["PLACEHOLDER"],
+      "defaultValue": [ "PLACEHOLDER" ],
       "metadata": {
         "description": "This must include at least 1 entry. The first host name will be treated as canonical, assuming that all later host names redirect to the canonical one. Include 'PLACEHOLDER' to skip all."
       }
     },
     "appServiceCertificateSecretNames": {
       "type": "array",
-      "defaultValue": ["PLACEHOLDER"],
+      "defaultValue": [ "PLACEHOLDER" ],
       "metadata": {
         "description": "This must include least 1 entry. It will be ignored if appServiceHostNames contains 'PLACEHOLDER'."
       }
@@ -136,39 +136,6 @@
       }
     },
     {
-      "condition": "[variables('hasCustomHostNames')]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-05-10",
-      "name": "[concat(variables('appServiceCertificateDeploymentNamePrefix'), copyIndex())]",
-      "dependsOn": ["[resourceId('Microsoft.Resources/deployments', variables('appServicePlanDeploymentName'))]"],
-      "copy": {
-        "name": "[variables('appServiceCertificateDeploymentCopyLoopName')]",
-        "count": "[length(parameters('appServiceCertificateSecretNames'))]",
-        "mode": "Serial"
-      },
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('platformBuildingBlocksDeploymentUrlBase'), 'app-service-certificate.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "keyVaultCertificateName": {
-            "value": "[parameters('appServiceCertificateSecretNames')[copyIndex()]]"
-          },
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "keyVaultResourceGroup": {
-            "value": "[parameters('keyVaultResourceGroupName')]"
-          },
-          "serverFarmId": {
-            "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
-          }
-        }
-      }
-    },
-    {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2018-11-01",
       "name": "[parameters('appServiceName')]",
@@ -193,7 +160,7 @@
       "apiVersion": "2018-11-01",
       "name": "[variables('appServiceStagingSlotName')]",
       "location": "[resourceGroup().location]",
-      "dependsOn": ["[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"],
+      "dependsOn": [ "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]" ],
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
         "httpsOnly": true,
@@ -225,34 +192,6 @@
       }
     },
     {
-      "condition": "[parameters('enableLogs')]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-05-10",
-      "name": "[variables('appServiceLogsDeploymentName')]",
-      "dependsOn": ["[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('platformBuildingBlocksDeploymentUrlBase'), 'app-service-logs.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appServiceName": {
-            "value": "[parameters('appServiceName')]"
-          },
-          "httpLoggingEnabled": {
-            "value": true
-          },
-          "requestTracingEnabled": {
-            "value": true
-          },
-          "detailedErrorLoggingEnabled": {
-            "value": true
-          }
-        }
-      }
-    },
-    {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "name": "[variables('migrationRunnerDeploymentName')]",
@@ -279,7 +218,7 @@
             "value": "[parameters('containerNetworkProfileId')]"
           },
           "command": {
-            "value": ["bin/prepare-database"]
+            "value": [ "bin/prepare-database" ]
           },
           "restartPolicy": {
             "value": "OnFailure"
@@ -291,7 +230,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "name": "[variables('workerDeploymentName')]",
-      "dependsOn": ["[resourceId('Microsoft.Resources/deployments', variables('migrationRunnerDeploymentName'))]"],
+      "dependsOn": [ "[resourceId('Microsoft.Resources/deployments', variables('migrationRunnerDeploymentName'))]" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -315,7 +254,7 @@
             "value": "[parameters('containerNetworkProfileId')]"
           },
           "command": {
-            "value": ["bin/start-worker"]
+            "value": [ "bin/start-worker" ]
           }
         }
       }
