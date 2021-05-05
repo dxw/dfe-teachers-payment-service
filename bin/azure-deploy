@@ -65,7 +65,7 @@ PROJECT_CORE_RESOURCE_GROUP_NAME="$RESOURCE_GROUP_PREFIX-ProjectCore"
 # PROJECT_CORE_DEPLOYMENT_NAME=$PROJECT_CORE_RESOURCE_GROUP_NAME
 
 SECRETS_RESOURCE_GROUP_NAME="$RESOURCE_GROUP_PREFIX-secrets"
-SECRETS_DEPLOYMENT_NAME=$SECRETS_RESOURCE_GROUP_NAME
+# SECRETS_DEPLOYMENT_NAME=$SECRETS_RESOURCE_GROUP_NAME
 
 APP_RESOURCE_GROUP_NAME="$RESOURCE_GROUP_PREFIX-app"
 APP_DEPLOYMENT_NAME=$APP_RESOURCE_GROUP_NAME
@@ -117,8 +117,8 @@ RESOURCE_LOCATION="West Europe"
 # PROJECT_CORE_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/ProjectCore/template.json"
 # PROJECT_CORE_PARAMETERS_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/ProjectCore/parameters/$ENVIRONMENT_NAME.json"
 
-SECRETS_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/secrets/template.json"
-SECRETS_PARAMETERS_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/secrets/parameters/$ENVIRONMENT_NAME.json"
+# SECRETS_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/secrets/template.json"
+# SECRETS_PARAMETERS_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/secrets/parameters/$ENVIRONMENT_NAME.json"
 
 APP_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/app/template.json"
 APP_PARAMETERS_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/app/parameters/$ENVIRONMENT_NAME.template.json"
@@ -164,38 +164,11 @@ fi
 
 echo "Starting secrets deployment with KeyVault createMode: $KEYVAULT_CREATE_MODE..."
 
-SECRETS_DEPLOYMENT_RESULT=$(
-  az deployment group create \
-    --name "$SECRETS_DEPLOYMENT_NAME" \
-    --resource-group "$SECRETS_RESOURCE_GROUP_NAME" \
-    --template-file "$SECRETS_TEMPLATE_FILE_PATH" \
-    --parameters "@$SECRETS_PARAMETERS_FILE_PATH" \
-    --parameters "$(
-      filter-azure-outputs \
-        "$PROJECT_CORE_DEPLOYMENT_RESULT" \
-        "['defaultSubnetId']"
-      )" \
-    --parameters "keyVaultCreateMode=$KEYVAULT_CREATE_MODE" \
-    --mode Complete \
-    --verbose \
-    <&- || true
-)
-
-if ! [ "$SECRETS_DEPLOYMENT_RESULT" ]; then
-  echo "Deployment failed!"
-  echo "There may be some parameters missing from $SECRETS_PARAMETERS_FILE_PATH or something else might have gone wrong."
-  exit 1
-fi
-
-echo "$SECRETS_DEPLOYMENT_RESULT"
-
 echo
 echo "$SECRETS_RESOURCE_GROUP_NAME deployed!"
 echo
 
 KEY_VAULT_ID=$(fetch-azure-output-value "$SECRETS_DEPLOYMENT_RESULT" keyVaultId)
-
-# KEY_VAULT_NAME=$((get-azkeyvault -vaultname 's118d01-secrets-kv').vaultname)
 
 echo 
 echo "$KEY_VAULT_NAME has been deployed - Logging"
