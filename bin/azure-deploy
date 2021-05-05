@@ -124,9 +124,9 @@ APP_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/app/template.json"
 APP_PARAMETERS_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/app/parameters/$ENVIRONMENT_NAME.template.json"
 APP_PARAMETERS_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/app/parameters/$ENVIRONMENT_NAME.json"
 
-ALERTS_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/alerts/template.json"
-ALERTS_PARAMETERS_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/alerts/parameters/$ENVIRONMENT_NAME.template.json"
-ALERTS_PARAMETERS_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/alerts/parameters/$ENVIRONMENT_NAME.json"
+# ALERTS_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/alerts/template.json"
+# ALERTS_PARAMETERS_TEMPLATE_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/alerts/parameters/$ENVIRONMENT_NAME.template.json"
+# ALERTS_PARAMETERS_FILE_PATH="$SCRIPT_PATH/../azure/resource_groups/alerts/parameters/$ENVIRONMENT_NAME.json"
 
 if [ "$LOGIN_TO_AZURE" ] && ! az account show > /dev/null; then
   echo "Logging in..."
