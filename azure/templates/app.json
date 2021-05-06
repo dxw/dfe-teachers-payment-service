@@ -31,14 +31,14 @@
     },
     "appServiceHostNames": {
       "type": "array",
-      "defaultValue": ["PLACEHOLDER"],
+      "defaultValue": [ "PLACEHOLDER" ],
       "metadata": {
         "description": "This must include at least 1 entry. The first host name will be treated as canonical, assuming that all later host names redirect to the canonical one. Include 'PLACEHOLDER' to skip all."
       }
     },
     "appServiceCertificateSecretNames": {
       "type": "array",
-      "defaultValue": ["PLACEHOLDER"],
+      "defaultValue": [ "PLACEHOLDER" ],
       "metadata": {
         "description": "This must include least 1 entry. It will be ignored if appServiceHostNames contains 'PLACEHOLDER'."
       }
@@ -140,7 +140,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "name": "[concat(variables('appServiceCertificateDeploymentNamePrefix'), copyIndex())]",
-      "dependsOn": ["[resourceId('Microsoft.Resources/deployments', variables('appServicePlanDeploymentName'))]"],
+      "dependsOn": [ "[resourceId('Microsoft.Resources/deployments', variables('appServicePlanDeploymentName'))]" ],
       "copy": {
         "name": "[variables('appServiceCertificateDeploymentCopyLoopName')]",
         "count": "[length(parameters('appServiceCertificateSecretNames'))]",
@@ -193,7 +193,7 @@
       "apiVersion": "2018-11-01",
       "name": "[variables('appServiceStagingSlotName')]",
       "location": "[resourceGroup().location]",
-      "dependsOn": ["[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"],
+      "dependsOn": [ "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]" ],
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
         "httpsOnly": true,
@@ -229,7 +229,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "name": "[variables('appServiceLogsDeploymentName')]",
-      "dependsOn": ["[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"],
+      "dependsOn": [ "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -255,43 +255,8 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
-      "name": "[variables('migrationRunnerDeploymentName')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'container.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "containerInstanceName": {
-            "value": "[parameters('migrationRunnerContainerInstanceName')]"
-          },
-          "containerName": {
-            "value": "[parameters('migrationRunnerContainerName')]"
-          },
-          "imageName": {
-            "value": "[parameters('containerImageName')]"
-          },
-          "environmentVariables": {
-            "value": "[parameters('appServiceEnvironmentVariables')]"
-          },
-          "networkProfileId": {
-            "value": "[parameters('containerNetworkProfileId')]"
-          },
-          "command": {
-            "value": ["bin/prepare-database"]
-          },
-          "restartPolicy": {
-            "value": "OnFailure"
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-05-10",
       "name": "[variables('workerDeploymentName')]",
-      "dependsOn": ["[resourceId('Microsoft.Resources/deployments', variables('migrationRunnerDeploymentName'))]"],
+      "dependsOn": [ "[resourceId('Microsoft.Resources/deployments', variables('migrationRunnerDeploymentName'))]" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -315,7 +280,7 @@
             "value": "[parameters('containerNetworkProfileId')]"
           },
           "command": {
-            "value": ["bin/start-worker"]
+            "value": [ "bin/start-worker" ]
           }
         }
       }
