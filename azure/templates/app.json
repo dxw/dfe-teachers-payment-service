@@ -255,6 +255,41 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
+      "name": "[variables('migrationRunnerDeploymentName')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'), 'container.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "containerInstanceName": {
+            "value": "[parameters('migrationRunnerContainerInstanceName')]"
+          },
+          "containerName": {
+            "value": "[parameters('migrationRunnerContainerName')]"
+          },
+          "imageName": {
+            "value": "[parameters('containerImageName')]"
+          },
+          "environmentVariables": {
+            "value": "[parameters('appServiceEnvironmentVariables')]"
+          },
+          "networkProfileId": {
+            "value": "[parameters('containerNetworkProfileId')]"
+          },
+          "command": {
+            "value": ["bin/prepare-database"]
+          },
+          "restartPolicy": {
+            "value": "OnFailure"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
       "name": "[variables('workerDeploymentName')]",
       "dependsOn": ["[resourceId('Microsoft.Resources/deployments', variables('migrationRunnerDeploymentName'))]"],
       "properties": {
