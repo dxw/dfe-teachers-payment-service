@@ -34,6 +34,7 @@
       </fieldset>
 
       <fieldset class="govuk-fieldset">
+      <%= form_group_tag current_claim, :date_of_birth do %>
         <div class="govuk-!-padding-bottom-6">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
             <h1 class="govuk-fieldset__heading">
@@ -46,29 +47,32 @@
           </div>
 
           <div class="govuk-date-input">
+            <%= errors_tag current_claim, :date_of_birth %>
             <div class="govuk-date-input__item">
-              <div class="govuk-form-group">
+              <%= form_group_tag current_claim, :"claim[date_of_birth(3i)]" do %>
                 <%= label_tag :"claim_date_of_birth_3i", "Day", class: "govuk-label govuk-date-input__label" %>
                 <%= text_field_tag :"claim[date_of_birth(3i)]", form.object.date_of_birth.try(:day), id: "claim_date_of_birth_3i", class: "govuk-input govuk-date-input__input govuk-input--width-2", type: "number", autocomplete: "bday-day", pattern: "[0-9]*" %>
-              </div>
+              <% end %>
             </div>
             <div class="govuk-date-input__item">
-              <div class="govuk-form-group">
+              <%= form_group_tag current_claim, :"claim[date_of_birth(2i)]" do %>
                 <%= label_tag :"claim_date_of_birth_2i", "Month", class: "govuk-label govuk-date-input__label" %>
                 <%= text_field_tag :"claim[date_of_birth(2i)]", form.object.date_of_birth.try(:month), id: "claim_date_of_birth_2i", class: "govuk-input govuk-date-input__input govuk-input--width-2", type: "number", autocomplete: "bday-month", pattern: "[0-9]*" %>
-              </div>
+              <% end %>
             </div>
             <div class="govuk-date-input__item">
-              <div class="govuk-form-group">
+              <%= form_group_tag current_claim, :"claim[date_of_birth(1i)]" do %>
                 <%= label_tag :"claim_date_of_birth_1i", "Year", class: "govuk-label govuk-date-input__label" %>
                 <%= text_field_tag :"claim[date_of_birth(1i)]", form.object.date_of_birth.try(:year), id: "claim_date_of_birth_1i", class: "govuk-input govuk-date-input__input govuk-input--width-4", type: "number", autocomplete: "bday-year", pattern: "[0-9]*" %>
-              </div>
+              <% end %>
             </div>
           </div>
+          <% end %>
         </div>
       </fieldset>
 
       <div class="govuk-!-padding-bottom-6">
+        <%= form_group_tag current_claim, :national_insurance_number do %>
         <h1 class="govuk-label-wrapper">
           <%= form.label :national_insurance_number, t("early_career_payments.questions.national_insurance_number"), {class: "govuk-label govuk-label--l"}  %>
         </h1>
@@ -85,6 +89,7 @@
               minlength: 9,
               class: css_classes_for_input(current_claim, :national_insurance_number, 'govuk-input--width-10'),
               "aria-describedby" => "national_insurance_number-hint" %>
+      <% end %>
       </div>
 
       <%= form.submit "Continue", class: "govuk-button" %>
