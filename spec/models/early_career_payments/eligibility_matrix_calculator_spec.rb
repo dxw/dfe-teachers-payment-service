@@ -51,6 +51,22 @@ RSpec.describe EarlyCareerPayments::EligibilityMatrixCalculator, type: :model do
     describe "teaching chemistry" do
       let(:subject) { :chemistry }
 
+      context "when '2018_2019' was academic year of (start postgraduate / complete undergraduate) ITT" do
+        let(:itt_academic_year) { "2018_2019" }
+
+        it "returns false" do
+          expect(matrix_calculator.eligible_later?).to be false
+        end
+      end
+
+      context "when '2019_2020' was academic year of (start postgraduate / complete undergraduate) ITT" do
+        let(:itt_academic_year) { "2019_2020" }
+
+        it "returns false" do
+          expect(matrix_calculator.eligible_later?).to be false
+        end
+      end
+
       context "when '2020_2021' was academic year of (start postgraduate / complete undergraduate) ITT" do
         let(:itt_academic_year) { "2020_2021" }
 
