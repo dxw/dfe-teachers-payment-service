@@ -77,7 +77,8 @@ module EarlyCareerPayments
         subject_to_disciplinary_action? ||
         itt_subject_none_of_the_above? ||
         not_teaching_now_in_eligible_itt_subject? ||
-        ineligible_itt_academic_year?
+        ineligible_itt_academic_year? ||
+        not_eligible?
     end
 
     def ineligibility_reason
@@ -99,6 +100,11 @@ module EarlyCareerPayments
     def eligible_later?
       !ineligible? &&
         EligibilityMatrixCalculator.new(self).eligible_later?
+    end
+
+    def not_eligible?
+      # !ineligible? &&
+        EligibilityMatrixCalculator.new(self).not_eligible?
     end
 
     def award_amount
@@ -144,7 +150,8 @@ module EarlyCareerPayments
         no_entire_term_contract? ||
         not_employed_directly? ||
         subject_to_disciplinary_action? ||
-        ineligible_itt_academic_year?
+        ineligible_itt_academic_year? #||
+        # not_eligible?
     end
 
     def no_student_loan?

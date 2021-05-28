@@ -6,6 +6,10 @@ module EarlyCareerPayments
       @eligibility = eligibility
     end
 
+    def not_eligible?
+      MATRIX.dig(subject)&.exclude?(itt_academic_year) ? true : false
+    end
+
     def eligible_later?
       return false if subject == :mathematics && itt_academic_year == "2018_2019"
 
