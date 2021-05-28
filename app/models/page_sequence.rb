@@ -21,6 +21,10 @@ class PageSequence
     slugs[current_slug_index + 1]
   end
 
+  def previous_slug
+    slugs[current_slug_index]
+  end
+
   def in_sequence?(slug)
     slugs.include?(slug)
   end

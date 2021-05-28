@@ -33,6 +33,10 @@ RSpec.describe PageSequence do
     end
   end
 
+  describe "#previous_slug" do
+    xit ""
+  end
+
   describe "in_sequence?" do
     let(:page_sequence) { PageSequence.new(claim, slug_sequence, ["third-slug"]) }
 
