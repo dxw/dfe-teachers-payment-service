@@ -23,12 +23,19 @@ module EarlyCareerPayments
       "eligible-itt-subject",
       "teaching-subject-now",
       "itt-year",
+
+
+      
       "check-your-answers-part-one",
       "eligibility-confirmed",
       # eligible later phase of claim journey
       "eligible-later",
       # personal details phase of claim journey
       "how-we-will-use-information-provided",
+
+# end of qualified section
+
+
       "personal-details",
       "address",
       "email-address",
@@ -56,18 +63,21 @@ module EarlyCareerPayments
     def slugs
       Rails.logger.debug("#slugs")
       Rails.logger.debug("SLUGS: #{SLUGS}")
-      # Rails.logger.debug("!claim.eligibility.ineligible?: #{!claim.eligibility.ineligible?}")
-      # Rails.logger.debug("!claim.eligibility.not_eligible?: #{!claim.eligibility.not_eligible?}")
-      # Rails.logger.debug("!claim.eligibility.ineligible? && !claim.eligibility.not_eligible?: #{!claim.eligibility.ineligible? && !claim.eligibility.not_eligible?}")
-      SLUGS.dup.tap do |sequence|
-        sequence.delete("entire-term-contract") unless claim.eligibility.employed_as_supply_teacher?
-        sequence.delete("employed-directly") unless claim.eligibility.employed_as_supply_teacher?
-        sequence.delete("eligibility-confirmed") unless claim.eligibility.eligible?
-        sequence.delete("eligible-later") unless claim.eligibility.eligible_later?
-        sequence.delete("ineligible") if !claim.eligibility.ineligible? #&& !claim.eligibility.not_eligible?
-        remove_student_loan_slugs(sequence) if claim.has_student_loan == false
-        remove_student_loan_country_slugs(sequence)
-      end
+SLUGS.dup.tap do |sequence|
+  sequence.delete("entire-term-contract") unless claim.eligibility.employed_as_supply_teacher?
+  sequence.delete("employed-directly") unless claim.eligibility.employed_as_supply_teacher?
+
+
+# relevant to eligible / eligible later / ineliglbe 
+  sequence.delete("eligibility-confirmed") unless claim.eligibility.eligible?
+  sequence.delete("eligible-later") unless claim.eligibility.eligible_later?
+  sequence.delete("ineligible") unless claim.eligibility.ineligible?
+
+
+
+  remove_student_loan_slugs(sequence) unless claim.has_student_loan
+  remove_student_loan_country_slugs(sequence)
+end
     end
 
     private
