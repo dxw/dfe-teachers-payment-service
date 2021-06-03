@@ -62,6 +62,20 @@ module EarlyCareerPayments
     validates :postgraduate_masters_loan, on: [:"masters-loan", :submit], inclusion: {in: [true, false], message: "Select yes if you have a Postgraduate Master Loan taken out on or after 1st August 2016"}, unless: :no_student_loan?
     validates :postgraduate_doctoral_loan, on: [:"doctoral-loan", :submit], inclusion: {in: [true, false], message: "Select yes if you have a Postgraduate Doctoral Loan taken out on or after 1st August 2018"}, unless: :no_student_loan?
 
+    # validates :nqt_in_academic_year_after_itt, on: [:"nqt-in-academic-year-after-itt", :submit, :qualified], inclusion: {in: [true, false], message: "Select yes if you did your NQT in the academic year after your ITT"}
+    # validates :current_school, on: [:"current-school", :submit, :qualified], presence: {message: "Select a school from the list or search again for a different school"}
+    # validates :employed_as_supply_teacher, on: [:"supply-teacher", :submit, :qualified], inclusion: {in: [true, false], message: "Select yes if you are currently employed as a supply teacher"}
+    # validates :has_entire_term_contract, on: [:"entire-term-contract", :submit, :qualified], inclusion: {in: [true, false], message: "Select yes if you have a contract to teach at the same school for one term or longer"}, if: :employed_as_supply_teacher?
+    # validates :employed_directly, on: [:"employed-directly", :submit, :qualified], inclusion: {in: [true, false], message: "Select yes if you are employed directly by your school"}, if: :employed_as_supply_teacher?
+    # validates :subject_to_formal_performance_action, on: [:"formal-performance-action", :submit, :qualified], inclusion: {in: [true, false], message: "Select yes if you are subject to formal action for poor performance at work"}
+    # validates :subject_to_disciplinary_action, on: [:"disciplinary-action", :submit, :qualified], inclusion: {in: [true, false], message: "Select yes if you are subject to disciplinary action"}
+    # validates :pgitt_or_ugitt_course, on: [:"postgraduate-itt-or-undergraduate-itt-course", :submit, :qualified], presence: {message: "Select postgraduate if you did a Postgraduate ITT course"}
+    # validates :eligible_itt_subject, on: [:"eligible-itt-subject", :submit, :qualified], presence: {message: "Select if you completed your initial teacher training in Chemistry, Foreign Languages, Mathematics, Physics or None of these subjects"}
+    # validates :teaching_subject_now, on: [:"teaching-subject-now", :submit, :qualified], inclusion: {in: [true, false], message: "Select yes if you are currently teaching in your ITT subject now"}
+    # validates :itt_academic_year, on: [:"itt-year", :submit, :qualified], presence: {message: "Select if you started your initial teacher training in 2018 - 2019, 2019 - 2020, 2020 - 2021 or None of these academic years"}
+    # validates :postgraduate_masters_loan, on: [:"masters-loan", :submit], inclusion: {in: [true, false], message: "Select yes if you have a Postgraduate Master Loan taken out on or after 1st August 2016"}, unless: :no_student_loan?
+    # validates :postgraduate_doctoral_loan, on: [:"doctoral-loan", :submit], inclusion: {in: [true, false], message: "Select yes if you have a Postgraduate Doctoral Loan taken out on or after 1st August 2018"}, unless: :no_student_loan?
+
     delegate :name, to: :current_school, prefix: true, allow_nil: true
 
     def policy
@@ -69,6 +83,10 @@ module EarlyCareerPayments
     end
 
     def ineligible?
+      # A
+      logger.debug("#ineligible?")
+      logger.debug("qualified?: #{qualified?}")
+      logger.debug("normal ineligible? after this phase")
       ineligible_nqt_in_academic_year_after_itt? ||
         ineligible_current_school? ||
         no_entire_term_contract? ||
@@ -78,7 +96,77 @@ module EarlyCareerPayments
         itt_subject_none_of_the_above? ||
         not_teaching_now_in_eligible_itt_subject? ||
         ineligible_itt_academic_year? ||
-        not_eligible?
+        qualified_but_not_eligible?
+        # not_eligible?
+    end
+
+    def qualified?
+      # [
+        check_attributes_not_nil = []
+        check_attributes_present = []
+        optional_check_attributes_not_nil = []
+      # ].each {|arr| arr.clear }
+
+      check_attributes_not_nil = [
+        nqt_in_academic_year_after_itt,
+        employed_as_supply_teacher,
+        subject_to_formal_performance_action,
+        subject_to_disciplinary_action,
+        teaching_subject_now,
+      ].inject([]) do |result, attribute| 
+        result << !attribute.nil?
+        result
+      end
+
+      check_attributes_present = [
+        current_school,
+        pgitt_or_ugitt_course,
+        eligible_itt_subject,
+        itt_academic_year
+      ].inject([]) do |result, attribute| 
+        result << attribute.present?
+        result
+      end
+
+      optional_check_attributes_not_nil = []
+      if employed_as_supply_teacher?
+        optional_check_attributes_not_nil << !has_entire_term_contract.nil?
+        optional_check_attributes_not_nil << !employed_directly.nil?
+      end
+
+      logger.debug("check_attributes_not_nil: #{check_attributes_not_nil}")
+      logger.debug("check_attributes_present: #{check_attributes_present}")
+      logger.debug("optional_check_attributes_not_nil: #{optional_check_attributes_not_nil}")
+      (check_attributes_not_nil + optional_check_attributes_not_nil + check_attributes_present).all?
+    end
+
+    def qualified_but_not_eligible?
+      # B
+      logger.debug("#qualified_but_not_eligible?")
+
+      # logger.debug("not qualified: #{!qualified?}")
+      return false if !qualified?
+
+      logger.debug("So must have answered all eligibility questions")
+      logger.debug("So qualified, now check if not_eligible?")
+      not_eligible?
+    end
+
+    def not_eligible?
+      # D
+      logger.debug("#not_eligible?")
+      res = EligibilityMatrixCalculator.new(self).not_eligible?
+      logger.debug("EligibilityMatrixCalculator.new(self).not_eligible?: #{res}")
+      logger.debug("!ineligible?: #{!ineligible?}")
+      logger.debug("!ineligible? && EligibilityMatrixCalculator.new(self).not_eligible?: #{!ineligible?} && #{EligibilityMatrixCalculator.new(self).not_eligible?}")
+      logger.debug("!ineligible? && EligibilityMatrixCalculator.new(self).not_eligible?: #{!ineligible? && EligibilityMatrixCalculator.new(self).not_eligible?}")
+      logger.debug("!ineligible? || EligibilityMatrixCalculator.new(self).not_eligible?: #{!ineligible?} || #{EligibilityMatrixCalculator.new(self).not_eligible?}")
+      logger.debug("!ineligible? || EligibilityMatrixCalculator.new(self).not_eligible?: #{!ineligible? || EligibilityMatrixCalculator.new(self).not_eligible?}")
+
+
+      # !ineligible? &&
+      logger.debug("EligibilityMatrixCalculator.new(self).not_eligible?: #{EligibilityMatrixCalculator.new(self).not_eligible?}")
+        EligibilityMatrixCalculator.new(self).not_eligible?
     end
 
     def ineligibility_reason
@@ -92,19 +180,18 @@ module EarlyCareerPayments
     end
 
     def eligible?
-      !ineligible? &&
+      logger.debug("#eligible?")
+      # qualified? &&
+      # !ineligible? &&
         itt_academic_year_2018_2019? &&
         itt_subject_mathematics?
     end
 
     def eligible_later?
-      !ineligible? &&
-        EligibilityMatrixCalculator.new(self).eligible_later?
-    end
-
-    def not_eligible?
+      logger.debug("#eligible_later?")
       # !ineligible? &&
-        EligibilityMatrixCalculator.new(self).not_eligible?
+      # qualified? &&
+        EligibilityMatrixCalculator.new(self).eligible_later?
     end
 
     def award_amount
@@ -150,8 +237,8 @@ module EarlyCareerPayments
         no_entire_term_contract? ||
         not_employed_directly? ||
         subject_to_disciplinary_action? ||
-        ineligible_itt_academic_year? #||
-        # not_eligible?
+        ineligible_itt_academic_year? ||
+        not_eligible?
     end
 
     def no_student_loan?

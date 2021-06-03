@@ -99,10 +99,12 @@ class ClaimsController < BasePublicController
   end
 
   def check_claim_not_in_progress
+    logger.debug("ClaimsController#check_claim_not_in_progress")
     redirect_to(existing_session_path(policy: params[:policy])) if claim_in_progress?
   end
 
   def claim_in_progress?
+    Rails.logger.debug("ClaimsController#claim_in_progress?")
     session[:claim_id].present? && !current_claim.eligibility.ineligible?
   end
 

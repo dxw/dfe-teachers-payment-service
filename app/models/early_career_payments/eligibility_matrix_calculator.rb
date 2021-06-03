@@ -7,7 +7,7 @@ module EarlyCareerPayments
     end
 
     def not_eligible?
-      MATRIX.dig(subject)&.exclude?(itt_academic_year) ? true : false
+      MATRIX.dig(subject.to_s, itt_academic_year).nil? ? true : false
     end
 
     def eligible_later?

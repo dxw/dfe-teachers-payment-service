@@ -15,7 +15,8 @@ class PageSequence
   end
 
   def next_slug
-    return "ineligible" if claim.eligibility.ineligible?
+    Rails.logger.debug("PageSequence#next_slug")
+    return "ineligible" if claim.eligibility.ineligible? #&& claim.eligibility.not_eligible?
     return "check-your-answers" if claim.submittable?
 
     slugs[current_slug_index + 1]
