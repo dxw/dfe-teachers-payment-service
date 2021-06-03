@@ -391,6 +391,7 @@ class Claim < ApplicationRecord
   end
 
   def claim_must_not_be_ineligible
+    logger.debug("Claim#claim_must_not_be_ineligible")
     errors.add(:base, "You’re not eligible for this payment") if eligibility.ineligible?
   end
 

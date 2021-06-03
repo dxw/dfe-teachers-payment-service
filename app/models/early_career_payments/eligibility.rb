@@ -85,9 +85,7 @@ module EarlyCareerPayments
     def ineligible?
       # A
       logger.debug("#ineligible?")
-      logger.debug("qualified?: #{qualified?}")
-      logger.debug("normal ineligible? after this phase")
-      ineligible_nqt_in_academic_year_after_itt? ||
+      status = (ineligible_nqt_in_academic_year_after_itt? ||
         ineligible_current_school? ||
         no_entire_term_contract? ||
         not_employed_directly? ||
@@ -95,17 +93,27 @@ module EarlyCareerPayments
         subject_to_disciplinary_action? ||
         itt_subject_none_of_the_above? ||
         not_teaching_now_in_eligible_itt_subject? ||
-        ineligible_itt_academic_year? ||
-        qualified_but_not_eligible?
+        ineligible_itt_academic_year?) # ||
+        # qualified_but_not_eligible?
         # not_eligible?
+
+      logger.debug("qualified?: #{qualified?}")
+      logger.debug("status: #{status}")
+      logger.debug("status && qualified?: #{status && qualified?}")
+      logger.debug("status || qualified?: #{status || qualified?}")
+      # status
+
+      if qualified?
+        not_eligible?
+      else
+        status
+      end
     end
 
     def qualified?
-      # [
-        check_attributes_not_nil = []
-        check_attributes_present = []
-        optional_check_attributes_not_nil = []
-      # ].each {|arr| arr.clear }
+      check_attributes_not_nil = []
+      check_attributes_present = []
+      optional_check_attributes_not_nil = []
 
       check_attributes_not_nil = [
         nqt_in_academic_year_after_itt,
