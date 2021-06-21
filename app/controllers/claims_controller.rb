@@ -4,18 +4,21 @@ class ClaimsController < BasePublicController
 
   skip_before_action :send_unstarted_claiments_to_the_start, only: [:new, :create, :timeout]
   before_action :check_page_is_in_sequence, only: [:show, :update]
+  # before_action :update_session_with_previous_slug, only: [:update]
   before_action :update_session_with_current_slug, only: [:show]
   before_action :check_claim_not_in_progress, only: [:new]
   before_action :clear_claim_session, only: [:new]
   before_action :prepend_view_path_for_policy
 
   def new
+    session[:previous_slug] = nil
     render first_template_in_sequence
   end
 
   def create
     current_claim.attributes = claim_params
     if current_claim.save(context: page_sequence.slugs.first.to_sym)
+      # update_session_with_previous_slug
       session[:claim_id] = current_claim.to_param
       redirect_to claim_path(current_policy_routing_name, next_slug)
     else
@@ -36,6 +39,10 @@ class ClaimsController < BasePublicController
     if current_claim.save(context: page_sequence.current_slug.to_sym)
       generate_one_time_password
       store_in_session_one_time_password
+
+      logger.debug "page_sequence.current_slug: #{page_sequence.current_slug}"
+      update_session_with_previous_slug
+      # session[:back_slug] = page_sequence.current_slug
       redirect_to claim_path(current_policy_routing_name, next_slug)
     else
       show
@@ -95,6 +102,11 @@ class ClaimsController < BasePublicController
 
   def update_session_with_current_slug
     session[:current_slug] = params[:slug]
+  end
+
+  def update_session_with_previous_slug
+    # return if next_slug == "ineligible"
+    session[:back_slug] = page_sequence.current_slug
   end
 
   def check_claim_not_in_progress

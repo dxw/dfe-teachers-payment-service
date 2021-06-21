@@ -19,11 +19,16 @@ class BasePublicController < ApplicationController
     if claim_session_timed_out?
       policy_routing_name_for_redirect = current_policy_routing_name
       clear_claim_session
+      clear_ecp_back_slug if currect_claim.has_ecp_policy?
       redirect_to timeout_claim_path(policy_routing_name_for_redirect)
     end
   end
 
   def update_last_seen_at
     session[:last_seen_at] = Time.zone.now
+  end
+
+  def clear_ecp_back_slug
+    session.delete(:back_slug)
   end
 end

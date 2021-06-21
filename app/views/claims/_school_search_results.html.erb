@@ -2,6 +2,8 @@
 %>
 <% shared_view_css_size = current_claim.policy == EarlyCareerPayments ? "l" : "xl" %>
 
+<%#= render("shared/back_button") if current_claim.has_ecp_policy? %>
+
 <%= form_for current_claim, url: claim_path(current_policy_routing_name) do |form| %>
   <%= form_group_tag current_claim do %>
     <fieldset class="govuk-fieldset" aria-describedby="school-search-result-hint">

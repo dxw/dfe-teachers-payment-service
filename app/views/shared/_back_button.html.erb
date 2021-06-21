@@ -1,0 +1,8 @@
+<div class="govuk-grid-row govuk-!-padding-bottom-3 top-zero">
+  <div class="govuk-grid-column-two-thirds top-zero">
+    <%#= link_to request.referer class: "govuk-back-link pointer" %>
+    <%#= link_to request.referer, class: "govuk-back-link" %>
+    <%= link_to 'Back', claim_path(current_policy_routing_name, session[:back_slug]), class: "govuk-back-link" %>
+    <%#= link_to 'Back', redirect_back, class: "govuk-back-link" %>
+  </div>
+</div>
