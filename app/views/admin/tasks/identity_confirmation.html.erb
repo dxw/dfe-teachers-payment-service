@@ -17,7 +17,7 @@
       <%= render "task_outcome", task: @task do %>
       <% end %>
     <% else %>
-      <%= form_with model: @claim.tasks.where(name: "identity_confirmation").first, url: admin_claim_tasks_path(@claim.tasks.where(name: "identity_confirmation").first), scope: :task do |f| %>
+      <%= form_with model: [:admin, @claim, @claim.tasks.where(name: "identity_confirmation").first_or_initialize] do |f| %>
         <div class="govuk-form-group">
           <fieldset class="govuk-fieldset govuk-!-margin-bottom-6">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l ">
@@ -31,6 +31,7 @@
             </p>
 
             <%= f.hidden_field :passed %>
+            <%= f.hidden_field :name, value: "identity_confirmation" %>
 
             <div class="govuk-radios govuk-radios--inline">
               <div class="govuk-radios__item">

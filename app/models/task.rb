@@ -26,4 +26,8 @@ class Task < ApplicationRecord
   validates :passed, allow_nil: true, inclusion: {in: [true, false]}, on: :claim_verifier
   validates :claim_verifier_match, allow_nil: true, inclusion: {in: claim_verifier_matches.keys}
   validates :manual, allow_nil: true, inclusion: {in: [true, false]}
+
+  def to_param
+    name
+  end
 end

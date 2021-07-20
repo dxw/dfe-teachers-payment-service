@@ -25,6 +25,18 @@ class Admin::TasksController < Admin::BaseAdminController
     end
   end
 
+  def update
+    @claim_checking_tasks = ClaimCheckingTasks.new(@claim)
+    @task = @claim.tasks.where(name: params[:name]).first
+
+    if @task.update(check_params)
+      redirect_to next_task_path
+    else
+      @tasks_presenter = @claim.policy::AdminTasksPresenter.new(@claim)
+      render current_task_name
+    end
+  end
+
   private
 
   def load_claim
@@ -40,7 +52,7 @@ class Admin::TasksController < Admin::BaseAdminController
   end
 
   def current_task_name
-    params[:name]
+    params[:name] || params[:task][:name] # TODO: Refactor
   end
 
   def next_task_name
@@ -58,10 +70,11 @@ class Admin::TasksController < Admin::BaseAdminController
 
   def check_params
     params.require(:task)
-      .permit(:passed)
-      .merge(name: current_task_name,
+      .permit(:passed, :name)
+      .merge(
         created_by: admin_user,
-        manual: true)
+        manual: true
+      )
   end
 
   def load_matching_claims
