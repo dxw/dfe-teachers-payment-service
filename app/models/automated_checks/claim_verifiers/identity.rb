@@ -52,7 +52,7 @@ module AutomatedChecks
             name: "identity_confirmation",
             claim_verifier_match: match,
             passed: passed,
-            manual: false,
+            manual: passed.nil? ? nil : false,
             created_by: admin_user
           }
         )
@@ -88,19 +88,19 @@ module AutomatedChecks
         if trn_matched? && name_matched? && dob_matched?
           create_note("National Insurance number")
 
-          return create_task(match: :any, passed: true)
+          return create_task(match: :any)
         end
 
         if trn_matched? && national_insurance_number_matched? && dob_matched?
           create_note("First name or surname")
 
-          return create_task(match: :any, passed: true)
+          return create_task(match: :any)
         end
 
         if trn_matched? && national_insurance_number_matched? && name_matched?
           create_note("Date of birth")
 
-          return create_task(match: :any, passed: true)
+          return create_task(match: :any)
         end
 
         if national_insurance_number_matched? && name_matched? & dob_matched?

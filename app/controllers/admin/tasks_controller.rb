@@ -32,7 +32,9 @@ class Admin::TasksController < Admin::BaseAdminController
   end
 
   def ensure_task_has_not_already_been_completed
-    if @claim.tasks.find_by(name: current_task_name)
+    claim = @claim.tasks.find_by(name: current_task_name)
+
+    if claim && !claim.passed.nil?
       redirect_to admin_claim_task_path(@claim, name: current_task_name), alert: "This task has already been completed"
     end
   end

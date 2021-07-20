@@ -61,14 +61,6 @@ module Admin
       content_tag(:strong, pluralize(days_until_decision_deadline, "day"), class: "govuk-tag #{decision_deadline_warning_class}")
     end
 
-    def identity_confirmation_question(claim)
-      if claim.identity_verified?
-        "Do our records for this teacher match the above name and date of birth from this claim?"
-      else
-        "Did #{claim.full_name} submit the claim?"
-      end
-    end
-
     def matching_attributes(first_claim, second_claim)
       first_attributes = matching_attributes_for(first_claim)
       second_attributes = matching_attributes_for(second_claim)

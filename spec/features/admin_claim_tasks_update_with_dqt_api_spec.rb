@@ -171,8 +171,9 @@ RSpec.feature "Admin claim tasks update with DQT API" do
         context "admin claim tasks identity confirmation view" do
           before { visit admin_claim_task_path(claim, :identity_confirmation) }
 
-          scenario "shows task outcome performed by automated check" do
-            expect(task_outcome).to have_text("This task was performed by an automated check on #{I18n.l(claim.tasks.where(name: :identity_confirmation).first.created_at)}")
+          scenario "shows identity confirmation question" do
+            expect(page).to have_content("Did #{claim.full_name} submit the claim?")
+            expect(page).to have_link(href: admin_claim_notes_path(claim))
           end
         end
 
@@ -214,8 +215,9 @@ RSpec.feature "Admin claim tasks update with DQT API" do
         context "admin claim tasks identity confirmation view" do
           before { visit admin_claim_task_path(claim, :identity_confirmation) }
 
-          scenario "shows task outcome performed by automated check" do
-            expect(task_outcome).to have_text("This task was performed by an automated check on #{I18n.l(claim.tasks.where(name: :identity_confirmation).first.created_at)}")
+          scenario "shows identity confirmation question" do
+            expect(page).to have_content("Did #{claim.full_name} submit the claim?")
+            expect(page).to have_link(href: admin_claim_notes_path(claim))
           end
         end
 
@@ -253,8 +255,9 @@ RSpec.feature "Admin claim tasks update with DQT API" do
         context "admin claim tasks identity confirmation view" do
           before { visit admin_claim_task_path(claim, :identity_confirmation) }
 
-          scenario "shows task outcome performed by automated check" do
-            expect(task_outcome).to have_text("This task was performed by an automated check on #{I18n.l(claim.tasks.where(name: :identity_confirmation).first.created_at)}")
+          scenario "shows identity confirmation question" do
+            expect(page).to have_content("Did #{claim.full_name} submit the claim?")
+            expect(page).to have_link(href: admin_claim_notes_path(claim))
           end
         end
 
@@ -296,8 +299,9 @@ RSpec.feature "Admin claim tasks update with DQT API" do
         context "admin claim tasks identity confirmation view" do
           before { visit admin_claim_task_path(claim, :identity_confirmation) }
 
-          scenario "shows task outcome performed by automated check" do
-            expect(task_outcome).to have_text("This task was performed by an automated check on #{I18n.l(claim.tasks.where(name: :identity_confirmation).first.created_at)}")
+          scenario "shows identity confirmation question" do
+            expect(page).to have_content("Did #{claim.full_name} submit the claim?")
+            expect(page).to have_link(href: admin_claim_notes_path(claim))
           end
         end
 
@@ -382,8 +386,9 @@ RSpec.feature "Admin claim tasks update with DQT API" do
         context "admin claim tasks identity confirmation view" do
           before { visit admin_claim_task_path(claim, :identity_confirmation) }
 
-          scenario "shows task outcome performed by automated check" do
-            expect(task_outcome).to have_text("This task was performed by an automated check on #{I18n.l(claim.tasks.where(name: :identity_confirmation).first.created_at)}")
+          scenario "shows identity confirmation question" do
+            expect(page).to have_content("Did #{claim.full_name} submit the claim?")
+            expect(page).to have_link(href: admin_claim_notes_path(claim))
           end
         end
 
@@ -455,8 +460,9 @@ RSpec.feature "Admin claim tasks update with DQT API" do
       context "admin claim tasks identity confirmation view" do
         before { visit admin_claim_task_path(claim, :identity_confirmation) }
 
-        scenario "shows task outcome performed by automated check" do
-          expect(task_outcome).to have_text("This task was performed by an automated check on #{I18n.l(claim.tasks.where(name: :identity_confirmation).first.created_at)}")
+        scenario "shows identity confirmation question" do
+          expect(page).to have_content("Did #{claim.full_name} submit the claim?")
+          expect(page).to have_link(href: admin_claim_notes_path(claim))
         end
       end
 
